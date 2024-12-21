@@ -192,7 +192,7 @@ const PasswordChecker = () => {
                     className="toggle-visibility"
                     onClick={togglePasswordVisibility}
                 >
-                    {showPassword ? "🙈" : "🙉"}
+                    {showPassword ? "🙉" : "🙈"}
                 </span>
             </div>
 
