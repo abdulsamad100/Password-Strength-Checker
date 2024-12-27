@@ -52,8 +52,6 @@ const PasswordChecker = () => {
             (pwd.length >= 8) + (pwd.length >= 12) + (pwd.length >= 16);
 
         if (isCommonPassword(pwd)) {
-            console.log("weak");
-            
             setStrength("Weak (Common Password)");
             setStColor("red");
             setTimeToCrack("Instantly");
@@ -62,7 +60,7 @@ const PasswordChecker = () => {
 
         setStrength(score <= 2 ? "Weak" : score <= 4 ? "Medium" : "Strong");
         setStColor(score <= 2 ? "red" : score <= 4 ? "orange" : "lightgreen");
-        calculateTimeToCrack(pwd, tests);
+        setTimeToCrack(calculateTimeToCrack(pwd, tests));
     };
 
     const isCommonPassword = (pwd) => {
@@ -73,33 +71,52 @@ const PasswordChecker = () => {
     };
 
     const calculateTimeToCrack = (pwd, charPools) => {
-        const guessesPerSecond = 1e9;
-        const characterSetSize =
-            (charPools.lowercase ? lowerCase.length : 0) +
-            (charPools.uppercase ? upperCase.length : 0) +
-            (charPools.digit ? numbers.length : 0) +
-            (charPools.symbol ? symbols.length : 0);
-
-        const totalCombinations = Math.pow(characterSetSize, pwd.length);
-        let seconds = totalCombinations / guessesPerSecond;
-
-        if (/(.)\1{2,}/.test(pwd)) seconds = Math.min(seconds, 10);
-
-        const timeUnits = [
-            { value: 3153600000000000000, label: "trillion years" },
-            { value: 3153600000000000, label: "billion years" },
-            { value: 3153600000000, label: "million years" },
-            { value: 3153600000, label: "thousand years" },
-            { value: 31536000, label: "years" },
-            { value: 86400, label: "days" },
-            { value: 3600, label: "hours" },
-            { value: 60, label: "minutes" },
-            { value: 1, label: "seconds" },
-        ];
-
-        const displayTime = timeUnits.find(({ value }) => seconds >= value);
-        setTimeToCrack(displayTime ? `${(seconds / displayTime.value).toFixed(2)} ${displayTime.label}` : "Instantly");
-    };
+        const chart = {
+            numbersOnly: [
+                "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly",
+                "1 sec", "5 secs", "1 min", "32 mins", "1 sec", "5 secs", "52 secs", "9 mins", "1 hour",
+                "14 hours", "6 days"
+            ],
+            lowercase: [
+                "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly",
+                "Instantly", "3 secs", "1 min", "32 mins", "14 hours", "2 weeks", "1 year", "27 years",
+                "713 years", "18k years", "481k years"
+            ],
+            upperAndLowercase: [
+                "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "1 sec",
+                "28 secs", "24 mins", "21 hours", "1 month", "6 years", "332 years", "17k years", "898k years",
+                "46m years", "2bn years", "126bn years"
+            ],
+            allCharacters: [
+                "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "2 secs",
+                "2 mins", "2 hours", "5 days", "10 months", "53 years", "3k years", "202k years", "12m years",
+                "779m years", "48bn years", "2tn years"
+            ]
+        };
+    
+        const getCharacterPoolType = (charPools) => {
+            if (charPools.lowercase && charPools.uppercase && charPools.digit && charPools.symbol) {
+                return "allCharacters";
+            } else if (charPools.lowercase && charPools.uppercase) {
+                return "upperAndLowercase";
+            } else if (charPools.lowercase || charPools.uppercase) {
+                return "lowercase";
+            } else if (charPools.digit) {
+                return "numbersOnly";
+            }
+            return "numbersOnly"; 
+        };
+    
+        const characterPoolType = getCharacterPoolType(charPools);
+        const passwordLength = Math.min(pwd.length, 18); 
+    
+        let timeToCrack = chart[characterPoolType][passwordLength - 1];
+    
+        if (/(.)\1{2,}/.test(pwd)) {
+            timeToCrack = "10 seconds";
+        }
+        return timeToCrack;
+    };    
 
     const generatePassword = () => {
         let newPassword =
