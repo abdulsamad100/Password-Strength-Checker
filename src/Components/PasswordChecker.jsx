@@ -42,7 +42,7 @@ const PasswordChecker = () => {
             lowercase: /[a-z]/.test(pwd),
             uppercase: /[A-Z]/.test(pwd),
             digit: /\d/.test(pwd),
-            symbol: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
+            symbol: /[\W_]/.test(pwd),
         };
 
         setCriteria(tests);
@@ -93,7 +93,7 @@ const PasswordChecker = () => {
                 "779m years", "48bn years", "2tn years"
             ]
         };
-    
+
         const getCharacterPoolType = (charPools) => {
             if (charPools.lowercase && charPools.uppercase && charPools.digit && charPools.symbol) {
                 return "allCharacters";
@@ -104,19 +104,19 @@ const PasswordChecker = () => {
             } else if (charPools.digit) {
                 return "numbersOnly";
             }
-            return "numbersOnly"; 
+            return "numbersOnly";
         };
-    
+
         const characterPoolType = getCharacterPoolType(charPools);
-        const passwordLength = Math.min(pwd.length, 18); 
-    
+        const passwordLength = Math.min(pwd.length, 18);
+
         let timeToCrack = chart[characterPoolType][passwordLength - 1];
-    
+
         if (/(.)\1{2,}/.test(pwd)) {
             timeToCrack = "10 seconds";
         }
         return timeToCrack;
-    };    
+    };
 
     const generatePassword = () => {
         let newPassword =
