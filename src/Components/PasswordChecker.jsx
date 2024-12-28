@@ -98,7 +98,7 @@ const PasswordChecker = () => {
                 "2 years", "10 years", "100 years"
             ]
         };
-        
+
 
         const getCharacterPoolType = (charPools) => {
             if (charPools.lowercase && charPools.uppercase && charPools.digit && charPools.symbol) {
@@ -114,13 +114,14 @@ const PasswordChecker = () => {
         };
 
         const characterPoolType = getCharacterPoolType(charPools);
-        console.log(characterPoolType);
-        
+
         const passwordLength = Math.min(pwd.length, 18);
 
         let timeToCrack = chart[characterPoolType][passwordLength - 1];
 
-        if (/(.)\1{2,}/.test(pwd)) {
+        const regex = /(\w)\1{2,}/;
+        
+        if (regex.test(pwd)) {
             timeToCrack = "10 seconds";
         }
         return timeToCrack;
