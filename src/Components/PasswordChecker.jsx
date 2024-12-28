@@ -91,8 +91,14 @@ const PasswordChecker = () => {
                 "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "Instantly", "2 secs",
                 "2 mins", "2 hours", "5 days", "10 months", "53 years", "3k years", "202k years", "12m years",
                 "779m years", "48bn years", "2tn years"
+            ],
+            symbolsOnly: [
+                "Instantly", "Instantly", "Instantly", "Instantly", "1 sec", "3 secs", "10 secs",
+                "1 min", "5 mins", "32 mins", "2 hours", "1 day", "3 days", "1 week", "3 months",
+                "2 years", "10 years", "100 years"
             ]
         };
+        
 
         const getCharacterPoolType = (charPools) => {
             if (charPools.lowercase && charPools.uppercase && charPools.digit && charPools.symbol) {
@@ -104,10 +110,12 @@ const PasswordChecker = () => {
             } else if (charPools.digit) {
                 return "numbersOnly";
             }
-            return "numbersOnly";
+            return "symbolsOnly";
         };
 
         const characterPoolType = getCharacterPoolType(charPools);
+        console.log(characterPoolType);
+        
         const passwordLength = Math.min(pwd.length, 18);
 
         let timeToCrack = chart[characterPoolType][passwordLength - 1];
